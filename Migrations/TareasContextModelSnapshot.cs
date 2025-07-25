@@ -17,7 +17,7 @@ namespace webapi.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.6")
+                .HasAnnotation("ProductVersion", "8.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -60,6 +60,47 @@ namespace webapi.Migrations
                             Nombre = "Sala",
                             Peso = 16
                         });
+                });
+
+            modelBuilder.Entity("webapi.Models.History", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AccessCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Date")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(3000)
+                        .HasColumnType("nvarchar(3000)");
+
+                    b.Property<Guid>("EstimationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SprintName")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("History", (string)null);
                 });
 
             modelBuilder.Entity("webapi.Models.Tarea", b =>
@@ -158,6 +199,15 @@ namespace webapi.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("User", (string)null);
+                });
+
+            modelBuilder.Entity("webapi.Models.History", b =>
+                {
+                    b.HasOne("webapi.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("webapi.Models.Tarea", b =>

@@ -9,6 +9,7 @@ public class TareasContext : DbContext
     public DbSet<Categoria> categorias { get; set; }
     public DbSet<Tarea> tareas { get; set; }
     public DbSet<User> users { get; set; }
+    public DbSet<History> Histories { get; set; }
     public TareasContext(DbContextOptions<TareasContext> options) : base(options) { }
 
 
@@ -56,5 +57,23 @@ public class TareasContext : DbContext
             user.Property(p => p.Phone).IsRequired().HasMaxLength(15);
             user.Property(p => p.ImageData).HasColumnType("varbinary(max)").IsRequired(false);
         });
+
+        modelBuilder.Entity<History>(Histories =>
+        {
+            Histories.ToTable("History");
+            Histories.HasKey(h => h.Id);
+            Histories.Property(h => h.Title).IsRequired().HasMaxLength(1000);
+            Histories.Property(h => h.Description).HasMaxLength(3000);
+            Histories.Property(h => h.Date).HasDefaultValueSql("CURRENT_TIMESTAMP");
+            Histories.Property(h => h.SprintName).HasMaxLength(150);
+            Histories.Property(h => h.EstimationId);
+            Histories.Property(h => h.AccessCode);
+
+            Histories.HasOne<User>() // Relación con User si aplica
+                .WithMany()
+                .HasForeignKey(h => h.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
     }
 }
